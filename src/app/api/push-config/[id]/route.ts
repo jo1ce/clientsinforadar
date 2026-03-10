@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import type { Database } from "@/lib/supabase/types";
 
 export async function PATCH(
   request: Request,
@@ -9,7 +10,7 @@ export async function PATCH(
   const body = await request.json();
   const { info_type, target_type, target_id, enabled } = body;
   const supabase = createAdminClient();
-  const updates: Record<string, unknown> = {};
+  const updates: Database["public"]["Tables"]["push_config"]["Update"] = {};
   if (info_type !== undefined) updates.info_type = info_type;
   if (target_type !== undefined) updates.target_type = target_type;
   if (target_id !== undefined) updates.target_id = target_id;

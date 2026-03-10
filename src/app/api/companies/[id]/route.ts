@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import type { Database } from "@/lib/supabase/types";
 
 export async function GET(
   _request: Request,
@@ -20,7 +21,7 @@ export async function PATCH(
   const body = await request.json();
   const { name, credit_code, source_ids } = body;
   const supabase = createAdminClient();
-  const updates: Record<string, unknown> = {};
+  const updates: Database["public"]["Tables"]["companies"]["Update"] = {};
   if (name !== undefined) updates.name = name;
   if (credit_code !== undefined) updates.credit_code = credit_code;
   if (source_ids !== undefined) updates.source_ids = source_ids;

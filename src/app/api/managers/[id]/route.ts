@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import type { Database } from "@/lib/supabase/types";
 
 export async function GET(
   _request: Request,
@@ -20,7 +21,7 @@ export async function PATCH(
   const body = await request.json();
   const { name, feishu_user_id, feishu_open_id, role } = body;
   const supabase = createAdminClient();
-  const updates: Record<string, unknown> = {};
+  const updates: Database["public"]["Tables"]["managers"]["Update"] = {};
   if (name !== undefined) updates.name = name;
   if (feishu_user_id !== undefined) updates.feishu_user_id = feishu_user_id;
   if (feishu_open_id !== undefined) updates.feishu_open_id = feishu_open_id;
