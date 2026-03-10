@@ -13,7 +13,8 @@ export async function POST(request: Request) {
   const { name, feishu_user_id, feishu_open_id, role } = body;
   if (!name) return NextResponse.json({ error: "name required" }, { status: 400 });
   const supabase = createAdminClient();
-  const { data, error } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase client chain typing
+  const { data, error } = await (supabase as any)
     .from("managers")
     .insert({ name, feishu_user_id: feishu_user_id ?? null, feishu_open_id: feishu_open_id ?? null, role: role ?? "manager" })
     .select()

@@ -17,12 +17,14 @@ export async function GET(request: Request) {
   }
 
   const supabase = createAdminClient();
-  const { data: configs } = await supabase.from("push_config").select("*").eq("enabled", true);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase client chain typing
+  const { data: configs } = await (supabase as any).from("push_config").select("*").eq("enabled", true);
   if (!configs?.length) return NextResponse.json({ ok: true, pushed: 0, message: "No push config" });
 
   // 简化：取最近 24 小时内的信息，按 info_type 匹配推送（实际可加「已推送」标记表做增量）
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-  const { data: items } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase client chain typing
+  const { data: items } = await (supabase as any)
     .from("info_items")
     .select("*, companies(name)")
     .gte("fetched_at", since)
@@ -32,11 +34,13 @@ export async function GET(request: Request) {
   if (!items?.length) return NextResponse.json({ ok: true, pushed: 0, message: "No new items" });
 
   let pushed = 0;
-  for (const config of configs) {
-    const matched = items.filter((i) => i.type === config.info_type);
+  type PushConfigRow = { info_type: string; target_type: string; target_id: string };
+  type InfoRow = { type: string; [key: string]: unknown };
+  for (const config of configs as PushConfigRow[]) {
+    const matched = (items as InfoRow[]).filter((i) => i.type === config.info_type);
     for (const item of matched) {
       if (config.target_type === "feishu_group" && config.target_id) {
-        const content = formatInfoItemForFeishu(item as Parameters<typeof formatInfoItemForFeishu>[0]);
+        const content = formatInfoItemForFeishu(item as unknown as Parameters<typeof formatInfoItemForFeishu>[0]);
         const ok = await sendFeishuGroupMessage(config.target_id, content);
         if (ok) pushed++;
       }

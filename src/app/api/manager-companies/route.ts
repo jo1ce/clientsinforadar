@@ -6,7 +6,8 @@ export async function GET(request: Request) {
   const managerId = searchParams.get("manager_id");
   const companyId = searchParams.get("company_id");
   const supabase = createAdminClient();
-  let q = supabase.from("manager_companies").select("*, managers(*), companies(*)");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase client chain typing
+  let q = (supabase as any).from("manager_companies").select("*, managers(*), companies(*)");
   if (managerId) q = q.eq("manager_id", managerId);
   if (companyId) q = q.eq("company_id", companyId);
   const { data, error } = await q.order("created_at", { ascending: false });
@@ -20,7 +21,8 @@ export async function POST(request: Request) {
   if (!manager_id || !company_id)
     return NextResponse.json({ error: "manager_id and company_id required" }, { status: 400 });
   const supabase = createAdminClient();
-  const { data, error } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase client chain typing
+  const { data, error } = await (supabase as any)
     .from("manager_companies")
     .insert({ manager_id, company_id })
     .select()
@@ -35,7 +37,8 @@ export async function DELETE(request: Request) {
   const managerId = searchParams.get("manager_id");
   const companyId = searchParams.get("company_id");
   const supabase = createAdminClient();
-  let q = supabase.from("manager_companies").delete();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase client chain typing
+  let q = (supabase as any).from("manager_companies").delete();
   if (id) q = q.eq("id", id);
   else if (managerId && companyId) q = q.eq("manager_id", managerId).eq("company_id", companyId);
   else return NextResponse.json({ error: "id or (manager_id and company_id) required" }, { status: 400 });

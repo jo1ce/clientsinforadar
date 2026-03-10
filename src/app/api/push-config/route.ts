@@ -14,7 +14,8 @@ export async function POST(request: Request) {
   if (!info_type || !target_type || !target_id)
     return NextResponse.json({ error: "info_type, target_type, target_id required" }, { status: 400 });
   const supabase = createAdminClient();
-  const { data, error } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase client chain typing
+  const { data, error } = await (supabase as any)
     .from("push_config")
     .insert({
       info_type,

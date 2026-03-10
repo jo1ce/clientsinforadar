@@ -26,7 +26,8 @@ export async function PATCH(
   if (feishu_user_id !== undefined) updates.feishu_user_id = feishu_user_id;
   if (feishu_open_id !== undefined) updates.feishu_open_id = feishu_open_id;
   if (role !== undefined) updates.role = role;
-  const { data, error } = await supabase.from("managers").update(updates).eq("id", id).select().single();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase client chain typing quirk
+  const { data, error } = await (supabase as any).from("managers").update(updates).eq("id", id).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(data);
 }

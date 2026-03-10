@@ -15,7 +15,8 @@ export async function PATCH(
   if (target_type !== undefined) updates.target_type = target_type;
   if (target_id !== undefined) updates.target_id = target_id;
   if (enabled !== undefined) updates.enabled = enabled;
-  const { data, error } = await supabase.from("push_config").update(updates).eq("id", id).select().single();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase client chain typing quirk
+  const { data, error } = await (supabase as any).from("push_config").update(updates).eq("id", id).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(data);
 }

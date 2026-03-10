@@ -10,13 +10,15 @@ export async function GET(request: Request) {
   const supabase = createAdminClient();
 
   if (managerId) {
-    const { data: links } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase client chain typing
+    const { data: links } = await (supabase as any)
       .from("manager_companies")
       .select("company_id")
       .eq("manager_id", managerId);
-    const companyIds = (links ?? []).map((r) => r.company_id);
+    const companyIds = (links ?? []).map((r: { company_id: string }) => r.company_id);
     if (companyIds.length === 0) return NextResponse.json([]);
-    const { data, error } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase client chain typing
+    const { data, error } = await (supabase as any)
       .from("info_items")
       .select("*, companies(name)")
       .in("company_id", companyIds)
@@ -27,7 +29,8 @@ export async function GET(request: Request) {
   }
 
   if (companyId) {
-    const { data, error } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase client chain typing
+    const { data, error } = await (supabase as any)
       .from("info_items")
       .select("*, companies(name)")
       .eq("company_id", companyId)
@@ -37,7 +40,8 @@ export async function GET(request: Request) {
     return NextResponse.json(data ?? []);
   }
 
-  const { data, error } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase client chain typing
+  const { data, error } = await (supabase as any)
     .from("info_items")
     .select("*, companies(name)")
     .order("fetched_at", { ascending: false })
@@ -53,7 +57,8 @@ export async function POST(request: Request) {
   if (!company_id || !type || !title || !source)
     return NextResponse.json({ error: "company_id, type, title, source required" }, { status: 400 });
   const supabase = createAdminClient();
-  const { data, error } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase client chain typing
+  const { data, error } = await (supabase as any)
     .from("info_items")
     .insert({
       company_id,

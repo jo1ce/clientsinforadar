@@ -13,7 +13,8 @@ export async function POST(request: Request) {
   const { name, credit_code, source_ids } = body;
   if (!name) return NextResponse.json({ error: "name required" }, { status: 400 });
   const supabase = createAdminClient();
-  const { data, error } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase client chain typing
+  const { data, error } = await (supabase as any)
     .from("companies")
     .insert({ name, credit_code: credit_code ?? null, source_ids: source_ids ?? null })
     .select()

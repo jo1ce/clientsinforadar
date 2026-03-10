@@ -25,7 +25,8 @@ export async function PATCH(
   if (name !== undefined) updates.name = name;
   if (credit_code !== undefined) updates.credit_code = credit_code;
   if (source_ids !== undefined) updates.source_ids = source_ids;
-  const { data, error } = await supabase.from("companies").update(updates).eq("id", id).select().single();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase client chain typing quirk
+  const { data, error } = await (supabase as any).from("companies").update(updates).eq("id", id).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(data);
 }
